@@ -31,9 +31,112 @@ public static class PathfindingAlgorithm
      
      HINT: Start simple with BFS (ignore wall costs and vents), then extend to weighted Dijkstra
      </summary> */
+
+
+    static int width;
+    static int height;
+
+    static List<Vector2Int>[,] vertexes;
+
+    static bool[,] visited;
+    static Vector2Int[,] edgeTo;
+
+    static void CreateMap(IMapData mapData)
+    {
+        width = mapData.Width;
+        height = mapData.Height;
+
+        vertexes = new List<Vector2Int>[width, height];
+
+        visited = new bool[width, height];
+        edgeTo = new Vector2Int[width, height];
+
+        for (int i = 0; i < width; i++) 
+        {
+            for (int j = 0; j < height; j++)
+            {
+                vertexes[i, j] = new List<Vector2Int>();
+            }
+        }
+
+
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for(int x = width - 1;x >= 0; x--)
+            {
+                Debug.Log($"{mapData.HasHorizontalWall(x, y)} : {mapData.HasVerticalWall(x, y)}, ({x},{y})");
+
+                if (x - 1 >= 0 && !mapData.HasVerticalWall(x, y)) AddEdge(new Vector2Int(x, y), new Vector2Int(x - 1, y));
+                if (y - 1 >= 0 && !mapData.HasHorizontalWall(x, y)) AddEdge(new Vector2Int(x, y), new Vector2Int(x, y - 1));
+            }
+        }
+
+    }
+
+    static void AddEdge(Vector2Int from, Vector2Int to)
+    {
+        vertexes[from.x, from.y].Add(to);
+        vertexes[to.x, to.y].Add(from);
+    }
+
+    static List<Vector2Int> Adj(Vector2Int vertex)
+    {
+        return vertexes[vertex.x, vertex.y];
+    }
+
+
+    static void bfs(Vector2Int v)
+    {
+        Queue<Vector2Int> q = new Queue<Vector2Int>();
+        q.Enqueue(v);
+        visited[v.x, v.y] = true;
+
+        while (q.Count > 0)
+        {
+            Vector2Int w = q.Dequeue();
+            foreach (Vector2Int i in Adj(w))
+            {
+                if (!visited[i.x, i.y])
+                {
+                    q.Enqueue(i);
+                    visited[i.x, i.y] = true;
+                    edgeTo[i.x, i.y] = w;
+                }
+            }
+        }
+    }
+
+
     public static List<Vector2Int> FindShortestPath(Vector2Int start, Vector2Int goal, IMapData mapData)
     {
         // TODO: Implement your pathfinding algorithm here
+        CreateMap(mapData);
+
+        bfs(start);
+
+        Stack<Vector2Int> tempStack = new Stack<Vector2Int>();
+
+        tempStack.Push(goal);
+        Vector2Int current = goal;
+
+        
+        
+        while (current != start && visited[goal.x, goal.y])
+        {
+            
+            current = edgeTo[current.x, current.y];
+            tempStack.Push(current);
+        }
+
+
+        List<Vector2Int> tempList = new List<Vector2Int>();
+
+        while (tempStack.Count > 0)
+        {
+            tempList.Add(tempStack.Pop());
+        }
+
+        return tempList;
 
         Debug.LogWarning("FindShortestPath not implemented yet!");
         return null;
