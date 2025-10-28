@@ -80,7 +80,6 @@ public static class PathfindingAlgorithm
         {
             for(int x = width - 1;x >= 0; x--)
             {
-                Debug.Log($"{mapData.HasHorizontalWall(x, y)} : {mapData.HasVerticalWall(x, y)}, ({x},{y})");
 
                 AddEdge(x, y, mapData);
             }
