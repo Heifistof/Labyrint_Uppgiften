@@ -35,8 +35,11 @@ public static class PathfindingAlgorithm
      HINT: Start simple with BFS (ignore wall costs and vents), then extend to weighted Dijkstra
      </summary> */
 
+
+    // kostnad att använda hålen
     static float ventCost = 10f;
 
+    // struct to hold an edge
     struct Edge
     {
         public Vector2Int destination;
@@ -55,7 +58,7 @@ public static class PathfindingAlgorithm
 
     static float[,] distTo;
 
-
+    // skapar grafen
     static void CreateMap(IMapData mapData)
     {
         width = mapData.Width;
@@ -204,6 +207,7 @@ public static class PathfindingAlgorithm
 
     }
 
+    // kollar för varje båge ut: om den vägen är kortare 
     static void RelaxEdge(Vector2Int v)
     {
         foreach(Edge e in Adj(v))
@@ -229,7 +233,7 @@ public static class PathfindingAlgorithm
         }
     }
 
-
+    // skapar graf, kör djikstras, skapar lista med vägen. 
     public static List<Vector2Int> FindShortestPath(Vector2Int start, Vector2Int goal, IMapData mapData)
     {
         // create graph
@@ -266,6 +270,7 @@ public static class PathfindingAlgorithm
         return null;
     }
 
+    // ska denna användas??
     public static bool IsMovementBlocked(Vector2Int from, Vector2Int to, IMapData mapData)
     {
         // TODO: Implement movement blocking logic
