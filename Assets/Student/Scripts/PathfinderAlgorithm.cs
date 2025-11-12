@@ -36,9 +36,7 @@ public static class PathfindingAlgorithm
      </summary> */
 
 
-    // kostnad att använda hålen
-    static float ventCost = 10f;
-
+    
     // struct to hold an edge
     struct Edge
     {
@@ -52,7 +50,7 @@ public static class PathfindingAlgorithm
     static int height;
 
     static List<Edge>[,] edges;
-
+    
     static bool[,] visited;
     static Vector2Int[,] edgeTo;
 
@@ -92,7 +90,7 @@ public static class PathfindingAlgorithm
         {
             foreach (Vector2Int to in mapData.GetOtherVentPositions(from))
             {
-                AddOneWayEdge(from, to, ventCost);
+                AddOneWayEdge(from, to, mapData.GetVentCost(from.x, from.y));
             }
         }
 
@@ -175,8 +173,10 @@ public static class PathfindingAlgorithm
     /// </summary>
     /// <param name="start"></param>
     /// 
-    static List<DijPrioHolder> prio; 
-   
+
+
+    static MinHeap prio;
+
     static void Dijkstras(Vector2Int start)
     {
         // set all nodes to infinite distance
@@ -191,14 +191,13 @@ public static class PathfindingAlgorithm
         distTo[start.x, start.y] = 0;
 
 
-        prio = new List<DijPrioHolder>();
+        prio = new MinHeap(width * height);
 
-        prio.Add(new DijPrioHolder {vertex = start, cost = 0});
+        prio.Insert(new DijPrioHolder {vertex = start, cost = 0});
 
-        while (prio.Count > 0)
+        while (!prio.IsEmpty())
         {
-            Vector2Int v = prio.ElementAt(0).vertex;
-            prio.RemoveAt(0);
+            Vector2Int v = prio.DelMin().vertex;
             visited[v.x, v.y] = true;
             RelaxEdge(v);
         }
@@ -218,16 +217,13 @@ public static class PathfindingAlgorithm
                 distTo[w.x, w.y] = (distTo[v.x, v.y] + e.weight);
                 edgeTo[w.x, w.y] = v;
 
-                if (prio.Contains(new DijPrioHolder() {vertex = w}))
+                if (prio.Contains(w))
                 {
+                    prio.ChangePriority(w, distTo[w.x, w.y]);
                     
-                    prio.Remove(new DijPrioHolder() { vertex = w });
-                    prio.Add(new DijPrioHolder() { vertex = w, cost = distTo[w.x, w.y]});
-                    prio.Sort();
                 } else
                 {
-                    prio.Add(new DijPrioHolder() { vertex = w, cost = distTo[w.x, w.y] });
-                    prio.Sort();
+                    prio.Insert(new DijPrioHolder() { vertex = w, cost = distTo[w.x, w.y] });
                 }
             }
         }
@@ -241,6 +237,7 @@ public static class PathfindingAlgorithm
 
 
         Dijkstras(start);
+        
 
         Stack<Vector2Int> tempStack = new Stack<Vector2Int>();
 
@@ -277,4 +274,7 @@ public static class PathfindingAlgorithm
         // For now, allow all movement so character can move while you work on pathfinding
         return false;
     }
+
+
+  
 }

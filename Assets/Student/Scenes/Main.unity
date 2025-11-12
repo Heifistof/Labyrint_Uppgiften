@@ -466,7 +466,7 @@ PrefabInstance:
       objectReference: {fileID: 2120782614}
     - target: {fileID: 2697895973313742624, guid: 0a7983cc724fc554a9cbc4ef450723a9, type: 3}
       propertyPath: fileName
-      value: ex2.json
+      value: stor2.json
       objectReference: {fileID: 0}
     - target: {fileID: 2697895973313742624, guid: 0a7983cc724fc554a9cbc4ef450723a9, type: 3}
       propertyPath: endPrefab
@@ -952,7 +952,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 100
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
